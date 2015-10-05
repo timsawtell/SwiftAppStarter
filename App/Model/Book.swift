@@ -8,32 +8,29 @@
 
 import Foundation
 
-class Book: ModelObject {
-    var name: String?
+class Book: NSObject, NSSecureCoding {
     var title: String?
     var price: String?
     var blurb: String?
     
     weak var author: Author? // books don't own Authors, Authors own books.
     
-    init () {
+    override init () {
         
     }
     
-    init (name: String) {
-        self.name = name
-    }
     
     @objc func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(self.name, forKey: "name")
+        aCoder.encodeObject(self.title, forKey: "title")
+        aCoder.encodeObject(self.price, forKey: "price")
+        aCoder.encodeObject(self.blurb, forKey: "blurb")
         aCoder.encodeObject(self.author, forKey: "author")
     }
     
     @objc required init?(coder aDecoder: NSCoder) {
-        self.name = aDecoder.decodeObjectForKey("name") as? String
-        self.title = aDecoder.decodeObjectForKey("name") as? String
-        self.price = aDecoder.decodeObjectForKey("name") as? String
-        self.blurb = aDecoder.decodeObjectForKey("name") as? String
+        self.title = aDecoder.decodeObjectForKey("title") as? String
+        self.price = aDecoder.decodeObjectForKey("price") as? String
+        self.blurb = aDecoder.decodeObjectForKey("blurb") as? String
         self.author = aDecoder.decodeObjectForKey("author") as? Author
     }
     

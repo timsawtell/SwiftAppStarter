@@ -44,7 +44,7 @@ class CommandCenter {
         let model = Model()
         do {
             let data = try NSData(contentsOfFile: kPathForModelFile, options: NSDataReadingOptions.DataReadingMappedIfSafe)
-            if let modelInstance = CommandCenter.securelyUnarchiveData(data, key: kModelArchiveKey) as? Model {
+            if let modelInstance = CommandCenter.unarchiveData(data, key: kModelArchiveKey) as? Model {
                 return modelInstance
             } else {
                 return model

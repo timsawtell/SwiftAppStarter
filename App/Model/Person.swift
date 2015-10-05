@@ -8,14 +8,11 @@
 
 import Foundation
 
-class Person: ModelObject {
+class Person: NSObject, NSSecureCoding {
     var name: String?
-    lazy var bookshelf: [Book] = {
-        return [Book]() // initialise the array when you first need it
-        }()
+    var bookshelf = Bookshelf()
     
-    init() {
-        
+    override init() {
     }
     
     init (name: String) {
@@ -29,7 +26,7 @@ class Person: ModelObject {
     
     @objc required init?(coder aDecoder: NSCoder) {
         self.name = aDecoder.decodeObjectForKey("name") as? String
-        self.bookshelf = aDecoder.decodeObjectForKey("bookshelf") as! [Book]
+        self.bookshelf = aDecoder.decodeObjectForKey("bookshelf") as! Bookshelf
     }
     
     @objc static func supportsSecureCoding() -> Bool {

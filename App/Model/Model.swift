@@ -8,23 +8,18 @@
 
 import Foundation
 
-protocol ModelObject: NSSecureCoding {
-    
-}
 
-class Model : ModelObject {
+class Model : NSObject, NSSecureCoding {
     
-    lazy var person: Person = {
-        return Person() // initialise the person when you first need it
-        }()
+    var person: Person
     
-    init() {
-        
+    override init() {
+        person = Person()
     }
     
     func save() {
-        let data = CommandCenter.securelyArchiveRootObject(self, key: kModelArchiveKey)
-        if !(data?.writeToFile(kPathForModelFile, atomically: true) != nil) {
+        let data: NSData = CommandCenter.archiveRootObject(self, key: kModelArchiveKey)!
+        if !(data.writeToFile(kPathForModelFile, atomically: true)) {
             NSLog("couldn't write model to disk")
         }
     }

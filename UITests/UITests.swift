@@ -1,14 +1,14 @@
 //
-//  SwiftAppStarterUITests.swift
-//  SwiftAppStarterUITests
+//  UITests.swift
+//  UITests
 //
-//  Created by Tim Sawtell on 29/09/2015.
+//  Created by Tim Sawtell on 9/30/15.
 //  Copyright © 2015 Tim Sawtell. All rights reserved.
 //
 
 import XCTest
 
-class SwiftAppStarterUITests: XCTestCase {
+class UITests: XCTestCase {
         
     override func setUp() {
         super.setUp()

@@ -34,8 +34,11 @@ class DemoViewController: TSViewController {
             if ( error != nil ) {
                 NSLog("Encountered an error: \(error?.localizedDescription)")
             } else {
-                NSLog( "Search results: \(GlobalModel.person.bookshelf.first?.title!)!)" )
+                if let book = GlobalModel.person.bookshelf.books!.first {
+                    NSLog( "Search results: \(book.title), by: \(book.author?.name)" )
+                }
             }
+            GlobalModel.save()
         }
         GlobalCommandRunner.executeCommand(cmd)
     }

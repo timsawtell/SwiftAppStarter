@@ -8,23 +8,26 @@
 
 import Foundation
 
-class Author: ModelObject {
+class Author: NSObject, NSSecureCoding {
     var name: String?
-    lazy var books: [Book] = {
-        return [Book]() // initialise the array when you first need it
-        }()
+    var books: [Book]
     
-    init () {
-        
+    override init () {
+        self.books = [Book]()
     }
     
     init (name: String) {
         self.name = name
+        self.books = [Book]()
     }
     
     func addBook(book: Book) -> Void {
         books.append(book)
         book.author = self
+    }
+    
+    func bookWithTitle(title: String) -> Book? {
+        return self.books.filter { $0.title == title}.first
     }
     
     @objc func encodeWithCoder(aCoder: NSCoder) {

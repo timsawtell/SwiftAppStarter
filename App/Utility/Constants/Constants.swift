@@ -26,7 +26,7 @@ let kPathForModelFile: String = pathForModel()!
 func pathForModel() -> String? {
     let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.ApplicationSupportDirectory, NSSearchPathDomainMask.UserDomainMask, true)
     if paths.count > 0 {
-        let path = paths[0]
+        var path = paths[0]
         let fm = NSFileManager()
         if !fm.fileExistsAtPath(path) {
             do {
@@ -35,9 +35,8 @@ func pathForModel() -> String? {
                 return nil
             }
         }
-        var URL = NSURL(fileURLWithPath: path)
-        URL = URL.URLByAppendingPathComponent(kModelFileName)
-        return URL.absoluteString
+        path = path.stringByAppendingString("/\(kModelFileName)")
+        return path
     }
     
     return nil
