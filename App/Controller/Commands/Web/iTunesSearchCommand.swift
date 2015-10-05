@@ -59,6 +59,7 @@ class iTunesSearchCommand: AsynchronousCommand {
                         }
                         break
                 }
+                GlobalModel.save()
                 strongSelf.finish()
         }
     }

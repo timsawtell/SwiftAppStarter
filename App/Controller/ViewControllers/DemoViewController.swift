@@ -29,6 +29,11 @@ class DemoViewController: TSViewController {
     }
     
     @IBAction func runCommandTouched(sender: AnyObject) {
+        
+        // an example of how the VC receives an event and how the "business logic" is 
+        // kept inside a Command. The singleton GlobalModel is updated (or not!) by the
+        // command and it's up to the VC to decide what to do in the command's commandCompletionBlock
+        
         let cmd = iTunesSearchCommand()
         cmd.commandCompletionBlock = { error in
             if ( error != nil ) {
@@ -38,7 +43,6 @@ class DemoViewController: TSViewController {
                     NSLog( "Search results: \(book.title), by: \(book.author?.name)" )
                 }
             }
-            GlobalModel.save()
         }
         GlobalCommandRunner.executeCommand(cmd)
     }
