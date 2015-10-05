@@ -54,10 +54,7 @@ class Bookshelf: NSObject, NSSecureCoding {
         return nil
     }
     
-    func bookWithTitle(bookTitle: String, authorName: String) -> Book? {
-        if let author = self.authorWithName(authorName) {
-            return author.bookWithTitle(bookTitle)
-        }
-        return nil
+    func bookWithTitle(bookTitle: String, author: Author) -> Book? {
+        return author.bookWithTitle(bookTitle)
     }
 }

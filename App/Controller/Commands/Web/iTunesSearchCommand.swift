@@ -22,7 +22,7 @@ class iTunesSearchCommand: AsynchronousCommand {
         
         Alamofire.request(.GET, "http://itunes.apple.com/lookup", parameters: params, headers: headers)
             .responseJSON { request, response, result in
-                guard let strongSelf = weakSelf else { return }
+                guard let strongSelf = weakSelf else { return } // if the Command instance doesn't exist anymore, break out early
                 
                 switch result {
                     case .Success(let JSON):
@@ -36,13 +36,13 @@ class iTunesSearchCommand: AsynchronousCommand {
                                 
                                 let person: Person = GlobalModel.person
                                 
-                                if (person.bookshelf.bookWithTitle(book.title!, authorName: author.name!) != nil) {
-                                    self.finish()
-                                    return // nothing to see here, the bookshelf already has this book in it
-                                }
-                                
                                 if let existingAuthor: Author = person.bookshelf.authorWithName(author.name!) {
                                     author = existingAuthor
+                                }
+                                
+                                if (person.bookshelf.bookWithTitle(book.title!, author: author) != nil) {
+                                    self.finish()
+                                    return // nothing to see here, the bookshelf already has this book in it
                                 }
                                 
                                 author.addBook(book)
@@ -63,56 +63,4 @@ class iTunesSearchCommand: AsynchronousCommand {
                 strongSelf.finish()
         }
     }
-    
-    /*
-    override func execute()  {
-        weak var weakSelf = self
-        
-        let successBlock: NetworkSuccessBlock = { (resultObject, request, response) -> Void in
-            if let strongSelf = weakSelf {
-                if strongSelf.cancelled { return }
-                
-                if let responseDict = resultObject as? NSDictionary {
-                    if let resultCount: Int = responseDict["resultCount"] as? Int {
-                        if resultCount <= 0 {
-                            strongSelf.error = NSError.errorWithCode(NSURLErrorCannotParseResponse, text: kNoResultsText)
-                            strongSelf.finish()
-                            return
-                        } else {
-                            // we have the info we need, we can start processing the results
-                            if let resultsArray: NSArray = responseDict["results"] as? NSArray {
-                                if let bookDictionary: NSDictionary = resultsArray.objectAtIndex(0) as? NSDictionary {
-                                    // create the book
-                                    let book = BookBuilder.objFromJSONDict(bookDictionary)
-                                    GlobalModel.books.append(book)
-                                    GlobalModel.currentBook = book
-                                    strongSelf.finish()
-                                    return
-                                }
-                            }
-                        }
-                    }
-                }
-                // catch all for the response not being formatted as expected
-                strongSelf.error = NSError.errorWithCode(NSURLErrorCannotParseResponse, text: kUnableToParseMessageText)
-                strongSelf.finish()
-                return
-            } else {
-                return // the creator of this block (the command) doesn't exist anymore. just finish.
-            }
-        }
-        
-        let errorBlock: NetworkErrorBlock = { (resultObject, error, request, response) -> Void in
-            if let strongSelf = weakSelf {
-                strongSelf.error = error
-                strongSelf.finish()
-            }
-        }
-        
-        let params = ["isbn": "055389692X"]
-        let headers = ["Accept": "application/json"]
-        Network.setBaseURLString("http://itunes.apple.com")
-        Network.performDataTask(relativePath: "lookup", method: .GET, parameters: params, additionalHeaders: headers, successBlock: successBlock, errorBlock: errorBlock)
-    }
-*/
 }
