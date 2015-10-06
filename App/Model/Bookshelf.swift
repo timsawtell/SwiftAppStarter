@@ -9,8 +9,8 @@
 import Foundation
 
 class Bookshelf: NSObject, NSSecureCoding {
-    var authors: [Author]?
-    var books: [Book]?
+    var authors = [Author]()
+    var books = [Book]()
     
     override init () {
         
@@ -22,8 +22,8 @@ class Bookshelf: NSObject, NSSecureCoding {
     }
     
     @objc required init?(coder aDecoder: NSCoder) {
-        self.authors = aDecoder.decodeObjectForKey("authors") as? [Author]
-        self.books = aDecoder.decodeObjectForKey("books") as? [Book]
+        self.authors = (aDecoder.decodeObjectForKey("authors") as? [Author])!
+        self.books = (aDecoder.decodeObjectForKey("books") as? [Book])!
     }
     
     @objc static func supportsSecureCoding() -> Bool {
@@ -31,27 +31,16 @@ class Bookshelf: NSObject, NSSecureCoding {
     }
     
     func addBook(book: Book) -> Void {
-        if var authors = self.authors {
-            if !authors.contains(book.author!) {
-                authors.append(book.author!)
-            }
-        } else {
-            authors = [book.author!]
+        if !authors.contains(book.author!) {
+            authors.append(book.author!)
         }
-        if var books = self.books {
-            if !(books.contains(book)) {
-                books.append(book)
-            }
-        } else {
-            books = [book]
+        if !(books.contains(book)) {
+            books.append(book)
         }
     }
     
     func authorWithName(name: String) -> Author? {
-        if let authors = self.authors {
-            return authors.filter{ $0.name! == name }.first
-        }
-        return nil
+        return authors.filter{ $0.name! == name }.first
     }
     
     func bookWithTitle(bookTitle: String, author: Author) -> Book? {

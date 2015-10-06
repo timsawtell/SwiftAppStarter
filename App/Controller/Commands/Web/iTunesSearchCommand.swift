@@ -15,9 +15,11 @@ import Alamofire
 
 class iTunesSearchCommand: AsynchronousCommand {
     
+    var isbn: String = ""
+    
     override func execute() {
         weak var weakSelf = self
-        let params = ["isbn": "055389692X"]
+        let params = ["isbn": isbn]
         let headers = ["Accept": "application/json"]
         
         Alamofire.request(.GET, "http://itunes.apple.com/lookup", parameters: params, headers: headers)
@@ -27,26 +29,29 @@ class iTunesSearchCommand: AsynchronousCommand {
                 switch result {
                     case .Success(let JSON):
                         if let resultsArray = JSON["results"] as? NSArray {
-                            if let bookDictionary: NSDictionary = resultsArray.objectAtIndex(0) as? NSDictionary {
-                                
-                                // We don't want to keep adding the same book to the Person's bookshelf, so lookup existing books before trying to add
-                                
-                                var author = AuthorBuilder.objFromJSONDict(bookDictionary)
-                                let book = BookBuilder.objFromJSONDict(bookDictionary)
-                                
-                                let person: Person = GlobalModel.person
-                                
-                                if let existingAuthor: Author = person.bookshelf.authorWithName(author.name!) {
-                                    author = existingAuthor
+                            if resultsArray.count > 0 {
+                                if let bookDictionary: NSDictionary = resultsArray.objectAtIndex(0) as? NSDictionary {
+                                    
+                                    // We don't want to keep adding the same book to the Person's bookshelf, so lookup existing books before trying to add
+                                    
+                                    var author = AuthorBuilder.objFromJSONDict(bookDictionary)
+                                    let book = BookBuilder.objFromJSONDict(bookDictionary)
+                                    
+                                    let person: Person = GlobalModel.person
+                                    
+                                    if let existingAuthor: Author = person.bookshelf.authorWithName(author.name!) {
+                                        author = existingAuthor
+                                    }
+                                    
+                                    if (person.bookshelf.bookWithTitle(book.title!, author: author) != nil) {
+                                        self.finish()
+                                        return // nothing to see here, the bookshelf already has this book in it
+                                    }
+                                    
+                                    author.addBook(book)
+                                    person.bookshelf.addBook(book)
+                                    GlobalModel.save()
                                 }
-                                
-                                if (person.bookshelf.bookWithTitle(book.title!, author: author) != nil) {
-                                    self.finish()
-                                    return // nothing to see here, the bookshelf already has this book in it
-                                }
-                                
-                                author.addBook(book)
-                                person.bookshelf.addBook(book)
                             }
                         }
                         break
@@ -59,7 +64,6 @@ class iTunesSearchCommand: AsynchronousCommand {
                         }
                         break
                 }
-                GlobalModel.save()
                 strongSelf.finish()
         }
     }

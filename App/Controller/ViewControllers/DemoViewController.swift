@@ -35,12 +35,15 @@ class DemoViewController: TSViewController {
         // command and it's up to the VC to decide what to do in the command's commandCompletionBlock
         
         let cmd = iTunesSearchCommand()
+        cmd.isbn = (self.tf3?.text)!;
         cmd.commandCompletionBlock = { error in
             if ( error != nil ) {
                 NSLog("Encountered an error: \(error?.localizedDescription)")
             } else {
-                if let book = GlobalModel.person.bookshelf.books!.first {
-                    NSLog( "Search results: \(book.title), by: \(book.author?.name)" )
+                if let book = GlobalModel.person.bookshelf.books.last {
+                    NSLog("Last Successful search result: \(book.title), by: \(book.author?.name)")
+                } else {
+                    NSLog("No results");
                 }
             }
         }
