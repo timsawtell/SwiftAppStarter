@@ -62,6 +62,7 @@ class iTunesSearchCommand: AsynchronousCommand {
                         if let data = data {
                             print("Response data: \(NSString(data: data, encoding: NSUTF8StringEncoding)!)")
                         }
+                        self.error = error as NSError
                         break
                 }
                 strongSelf.finish()
